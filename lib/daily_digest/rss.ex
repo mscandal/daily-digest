@@ -168,6 +168,7 @@ defmodule DailyDigest.Rss do
   end
 
   defp fetch_feed() do
+    File.rm_rf("/tmp/daily")
     :ok = File.mkdir_p("/tmp/daily/images")
 
     urls =
@@ -195,7 +196,7 @@ defmodule DailyDigest.Rss do
 
     epub = "/tmp/daily/#{slug}.epub"
     BUPE.Builder.run(config, epub)
-    {_, 0} = System.cmd("calibredb", ["add", epub, System.get_env("CALIBRE_DB")])
+    {_, 0} = System.cmd("calibredb", ["add", epub, "--library-path=#{System.get_env("CALIBRE_DB")}"])
     {:ok, _} = File.rm_rf("/tmp/daily")
   end
 end
