@@ -26,7 +26,9 @@ defmodule DailyDigest.Rss do
 
   defp schedule_next_run() do
     now = DateTime.to_naive(Timex.local())
-    {:ok, date} = Crontab.Scheduler.get_next_run_date(~e[30 7 * * *], now)
+    cron_string = System.get_env("DIGEST_CRON", "30 7 * * *")
+    cron = Crontab.CronExpression.Parser.parse!(cron_string)
+    {:ok, date} = Crontab.Scheduler.get_next_run_date(cron, now)
     ms = NaiveDateTime.diff(date, now, :millisecond)
     Logger.info("Scheduling next run at #{NaiveDateTime.to_iso8601(date)}")
     Process.send_after(self(), :generate_book, ms)
