@@ -1,6 +1,5 @@
 defmodule DailyDigest.Rss do
   use GenServer
-  import Crontab.CronExpression
   require Logger
 
   def start_link(_) do
@@ -169,6 +168,8 @@ defmodule DailyDigest.Rss do
   end
 
   defp fetch_feed() do
+    :ok = File.mkdir_p("/tmp/daily/images")
+
     urls =
       System.get_env("DAILY_URLS")
       |> String.split(",")
